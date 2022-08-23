@@ -3,15 +3,37 @@
     padding: 0;
 }
 
-body {
-    background-color: black;
+.principal {
+    background-image: url("fondo_2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100vw;
     height: 100vh;
+   
 }
  canvas {
     border: 2px solid white;
-    background-color: white;
+    background-color: rgba(252, 246, 246, 0.2);
+    position: absolute ;
+ }
+
+ .inicio {
+    width: 120px;
+    height: 60px;
+    background-color: red;
+    position: relative;
+    top: 300px;
+    
+    border: 5px solid rgb(54, 6, 6);
+    background-color: rgba(244, 9, 9, 0.6);
+    color: white;
+    text-decoration: none;
+    font-size: 45px;
+    border-radius: 20px;
+   
+
  }
