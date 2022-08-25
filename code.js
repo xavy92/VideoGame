@@ -10,6 +10,13 @@ btnIniciar.addEventListener("click", () => {
 const tanq = new Image() 
 tanq.src = "tanque.png"
 
+const bombImg = new Image()
+bombImg.src = "bomba.png"
+
+const balImg = new Image()
+balImg.src = "bala.png"
+
+
 //seleccionar canvas 
 let lienzo = document.getElementById("lienzo")
 //Acceso al metodo getContext()
@@ -18,6 +25,7 @@ let ctx = lienzo.getContext("2d")
 
 //lista de enemigos/ otros elementos
 const armas = []
+const armasProp = []
 
  
 
@@ -34,14 +42,21 @@ class Tanque{
     }
     derecha () {
         console.log("Avanza")
+        if(this.x + this.w < 600){ 
         this.x += 10;
     }
+    }
     izquierda () {
-        console.log("retroceder")
+        if (this.x > 0) {
+        this.x -= 10;
+    }
     }
     disparar () {
         console.log("disparar")
-    }
+        const balita = new Bala(this.x +  this.w / 2  , this.y - 30 , 20, 40, "" ,balImg)
+        armasProp.push(balita)
+        console.log(armasProp)
+    } 
     dibujarse () {
         ctx.fillStyle = this.color
         ctx.fillRect(this.x, this.y, this.w, this.h)
@@ -68,9 +83,30 @@ class Bombas{
     dibujarse() { 
         ctx.fillStyle = "red"
         ctx.fillRect(this.x, this.y, this.w, this.h)
+        ctx.drawImage(this.imagen, this.x, this.y, this.w, this.h)
         this.y += 1
     }
 }
+
+//balas
+class Bala{
+    constructor(x, y, w, h, color, imagen) {
+        this.x = x
+        this.y = y
+        this.w = w
+        this.h = h
+        this.color = color
+        this.imagen = imagen
+    }
+    dibujarse() { 
+        ctx.fillStyle = "red"
+        ctx.fillRect(this.x, this.y, this.w, this.h)
+        ctx.drawImage(this.imagen, this.x, this.y, this.w, this.h)
+        this.y -= 3
+    
+    }
+}
+
 
 
 //dibujar linea
@@ -79,16 +115,16 @@ class Bombas{
 
 //Moatrar el nombre del juego 
 
-function mostrarDatos (distancia) {
+function mostrarDatos (distancia, score, vida) {
     ctx.fillStyle = "black"
     ctx.font = "35px Arial"
     ctx.fillText("War Zone", 210, 35)
     ctx.fillText(`${distancia}m`,50, 35)
 
-    ctx.fillText(`score: 0`,420, 35)
+    ctx.fillText(`score: ${score}`,420, 35)
+    ctx.fillText(`Vida: ${vida}`, 420, 75)
 
 }
-
 
 //escuchar teclas
 
@@ -97,13 +133,13 @@ function teclas(tanquecito) {
         console.log("tecla tocada", evento.code)
         switch(evento.code){
             case "Space":
-                console.log("Brincale")
+                tanquecito.disparar()
                 break
             case "ArrowRight":
                 tanquecito.derecha()
                 break
             case "ArrowLeft":
-                console.log("para atras")
+                tanquecito.izquierda()
                 break
             case "ArrowDown":
                 console.log("Abajo")
@@ -121,37 +157,51 @@ function crearBombas () {
     const num = Math.floor(Math.random() * 100)
     console.log(num)
     if(num === 3) {
-        const bombas = new Bombas(250, 0, 50, 50, "red","","facil")
+        const posicionX = Math.floor(Math.random() * 550)
+        const bombas = new Bombas(posicionX, 0, 50, 50, "red", bombImg,"facil")
         armas.push(bombas)
     }
 }
 
 function iniciarJuego () {
     let distancia = 0
-    const tanquecito = new Tanque(250, 400, 100, 50, "green", 100, tanq)
+    const tanquecito = new Tanque(250, 450, 100, 50, "green", 100, tanq)
     teclas(tanquecito)
     console.log(tanquecito)
     tanquecito.dibujarse()
 
     
-     
+     //Aqui se re-dibuja el juego
 
     setInterval(() => {
-    ctx.clearRect(0, 0, 600, 500)
-    //mostrar datos
-    mostrarDatos(distancia)
-    distancia += 1
-    tanquecito.dibujarse()
+        ctx.clearRect(0, 0, 600, 500)
+        //mostrar datos
+        mostrarDatos(distancia, 0, tanquecito.vida)
+        distancia += 1
+        tanquecito.dibujarse()
 
-    //dibujar enemigos/elementos estra 
+        //dibujar enemigos/elementos estra 
 
-    armas.forEach((bombas) => {
+        armas.forEach((bombas, index) => {
         bombas.dibujarse()
-    })
-    
+        if(bombas.y === tanquecito.y - tanquecito.h) {
+            armas.splice(index, 1)
+            tanquecito.vida -= 25
+            //si sigue con vidas
+            if(tanquecito.vida <100) {
+                alert("murio")
+            }
+        }
 
-    crearBombas()
-    }, 30)
+    }) 
+
+
+    armasProp.forEach((bala)=> {
+        bala.dibujarse()
+    })
+
+    crearBombas()  
+    }, 1000/30)
  
 }
 iniciarJuego()
