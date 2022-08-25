@@ -2,7 +2,7 @@
 let btnIniciar = document.querySelector(".inicio")
 
 btnIniciar.addEventListener("click", () => {
-    console.log("inicia el juegooooo")
+    iniciarJuego()
 })
 
 //imagenes
@@ -196,15 +196,22 @@ function iniciarJuego () {
     }) 
 
 
-    armasProp.forEach((bala)=> {
+    armasProp.forEach((bala, baIndex)=> {
         bala.dibujarse()
+        armas.forEach((bombas,bIndex)=> {
+            if(bala.y <= bombas.y + bombas.h && bala.x >= bombas.x && bala.x <= bombas.x + bombas.w){
+                armasProp.splice(baIndex, 1)
+                armas.splice(bIndex, 1) 
+            } 
+        }) 
+
     })
 
     crearBombas()  
     }, 1000/30)
  
 }
-iniciarJuego()
+
 
 //agregar la imagen de tanque
 //crear enemigos
